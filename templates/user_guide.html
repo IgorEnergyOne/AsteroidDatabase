@@ -1,0 +1,103 @@
+{% extends 'base_template.html' %}
+{% block title %}About Us{% endblock %}
+
+{% block content %}
+<h1>User Guide</h1>
+<p>Information on how to use the database</p>
+<style>
+    table {
+        width: 80%;
+        border-collapse: collapse;
+    }
+    table, th, td {
+        border: 1px solid black;
+    }
+    th, td {
+        padding: 8px;
+        text-align: left;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+<h2>Parameters and Their Explanations</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Parameter</th>
+            <th>Explanation</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>data: 'id_num'</code></td>
+            <td>This parameter defines the column that will display the 'id_num' field from each row of data.</td>
+        </tr>
+        <tr>
+            <td><code>data: 'number'</code></td>
+            <td>This column will show the value of the 'number' field from each row of data.</td>
+        </tr>
+        <tr>
+            <td><code>data: 'name'</code></td>
+            <td>This parameter maps the 'name' field to the respective column.</td>
+        </tr>
+        <tr>
+            <td><code>data: 'class', orderable: false</code></td>
+            <td>Displays the 'class' field, and disables sorting on this column (the column cannot be clicked to sort).</td>
+        </tr>
+        <tr>
+            <td><code>data: 'a', name: 'a'</code></td>
+            <td>Displays the 'a' field and assigns it a custom name 'a' for internal use, such as for referencing or filtering.</td>
+        </tr>
+        <tr>
+            <td><code>data: 'e', name: 'e'</code></td>
+            <td>Displays the 'e' field and gives it a custom internal name 'e'.</td>
+        </tr>
+        <tr>
+            <td><code>data: 'i', name: 'i'</code></td>
+            <td>Displays the 'i' field and assigns it a custom internal name 'i'.</td>
+        </tr>
+        <tr>
+            <td><code>data: 'orbital_period'</code></td>
+            <td>This parameter binds the 'orbital_period' field to the respective column.</td>
+        </tr>
+        <tr>
+            <td><code>data: 'family_number'</code></td>
+            <td>This parameter binds the 'family_number' field to the respective column.</td>
+        </tr>
+        <tr>
+            <td><code>data: 'family_name', orderable: false</code></td>
+            <td>Displays the 'family_name' field and disables sorting for this column.</td>
+        </tr>
+        <tr>
+            <td><code>data: 'albedo'</code></td>
+            <td>This parameter binds the 'albedo' field to the respective column.</td>
+        </tr>
+        <tr>
+            <td><code>data: 'mag'</code></td>
+            <td>This parameter binds the 'mag' field to the respective column.</td>
+        </tr>
+        <tr>
+            <td><code>data: 'density'</code></td>
+            <td>This parameter binds the 'density' field to the respective column.</td>
+        </tr>
+        <tr>
+            <td><code>data: 'diameter'</code></td>
+            <td>This parameter binds the 'diameter' field to the respective column.</td>
+        </tr>
+        <tr>
+            <td><code>data: 'taxonomy class', orderable: false</code></td>
+            <td>Displays the 'taxonomy class' field and disables sorting for this column.</td>
+        </tr>
+        <tr>
+            <td><code>data: 'thermal inertia'</code></td>
+            <td>This parameter binds the 'thermal inertia' field to the respective column.</td>
+        </tr>
+        <tr>
+            <td><code>data: 'spin'</code></td>
+            <td>This parameter binds the 'spin' field to the respective column.</td>
+        </tr>
+    </tbody>
+</table>
+{% endblock %}

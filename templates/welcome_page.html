@@ -1,0 +1,48 @@
+{% extends 'base_template.html' %}
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/welcome_page.css') }}">
+<body class="bgtext-light">
+    <div class="container text-center py-5 mx-auto" id="welcome_hero">
+        <!-- Title Section -->
+        <header>
+            <h1 class="display-4 fw-bold">Welcome to the Database of M-type asteroids</h1>
+            <p class="lead mt-3">This is a comprehensive database of M-type asteroids, known for their metallic composition.
+             Discover, analyze, and visualize asteroid data in one comprehensive platform.</p>
+        </header>
+    </div>
+    <a href="{{ url_for('asteroid_table') }}" class="btn btn-primary" id="toTheDatabase">
+        Go to the database
+    </a>
+        <!-- Images Section -->
+    <section class="row mt-5 mx-auto " id='logos'>
+        <div class="col-md-4">
+            <img src="{{ url_for('static', filename='imgs/ndi.png') }}"
+                 alt="NDI logo" class="img-fluid rounded shadow"
+                 width="300" height="200">
+<!--                <p class="mt-2">Asteroid 1</p>-->
+        </div>
+        <div class="col-md-4">
+            <img src="{{ url_for('static', filename='imgs/logo_up.jpeg') }}"
+                 alt="Asteroid Image 2" class="img-fluid rounded shadow"
+                 width="300" height="200">
+<!--                <p class="mt-2">Asteroid 2</p>-->
+        </div>
+        <div class="col-md-4">
+            <img src="{{ url_for('static', filename='imgs/emblem_university.jpg') }}"
+                 alt="Asteroid Image 3" class="img-fluid rounded shadow"
+                 width="200" height="200">
+<!--                <p class="mt-2">Asteroid 3</p>-->
+        </div>
+    </section>
+<!--     Text field at the bottom -->
+   <div class="bottom-text" >
+   <p id="acknowledgements">This work was partially supported by the National Research Foundation
+  of Ukraine within the framework of the project N2020.02/0371 “Metallic asteroids: search for parent bodies of iron meteorites, sources of extraterrestrial
+  resources”.</p>
+  </div>
+</body>
+
+
+{% endblock %}

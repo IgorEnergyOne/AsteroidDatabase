@@ -1,0 +1,20 @@
+[project]
+name = "FlaskDatabase"
+version = "0.1"
+description = "An interactive dataabse of M-type asteroids."
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Linux",
+]
+dependencies = [
+    "flask",
+]
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = []

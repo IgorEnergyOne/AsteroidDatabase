@@ -1,0 +1,616 @@
+{% extends 'base_template.html' %}
+{% block title %}Asteroid Table{% endblock %}
+
+{% block content %}
+
+
+<script>
+function downloadAsteroidData() {
+    // Fetching the data
+fetch('/api/data') // Assuming this endpoint returns the database data
+    .then(response => response.json())
+    .then(data => {
+        const asteroidData = data['data'];
+
+        // Extracting column names from the first object in the data
+        const columns = Object.keys(asteroidData[0]);
+
+        // Creating the CSV content with column names and data
+        const csvContent = 'data:text/csv;charset=utf-8,' +
+            [columns.join(','), ...asteroidData.map(ast => columns.map(col => ast[col]).join(','))].join('\n');
+
+        // Creating the download link
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement('a');
+        link.setAttribute('href', encodedUri);
+        link.setAttribute('download', 'asteroid_data.csv');
+        document.body.appendChild(link);
+
+        // Triggering the download
+        link.click();
+        document.body.removeChild(link);
+    })
+    .catch(error => console.error('Error downloading CSV:', error));
+}
+
+function applyEmptyOnTopSorting() {
+    var __emptyOnTop = function(a, b, high) {
+        a = a || high;  // If `a` is null or undefined, set it to `high`
+        b = b || high;  // If `b` is null or undefined, set it to `high`
+        return ((a < b) ? -1 : ((a > b) ? 1 : 0)); // Compare and return -1, 1, or 0
+    };
+
+    jQuery.extend(jQuery.fn.dataTableExt.oSort, {
+        "empty-on-top-asc": function(a, b) {
+            return __emptyOnTop(a, b, Number.NEGATIVE_INFINITY); // Use negative infinity for ascending order
+        },
+        "empty-on-top-desc": function(a, b) {
+            return __emptyOnTop(a, b, Number.POSITIVE_INFINITY) * -1; // Use positive infinity for descending order and reverse the result
+        }
+    });
+}
+
+function customSort(a, b, isAscending = true) {
+    // Check if either value is NaN
+    const isANaN = isNaN(parseFloat(a));
+    const isBNaN = isNaN(parseFloat(b));
+
+    // If both are NaN, they are equal
+    if (isANaN && isBNaN) return 0;
+
+    // If a is NaN, it should come last
+    if (isANaN) return 1;
+
+    // If b is NaN, it should come last
+    if (isBNaN) return -1;
+
+    // Both are valid numbers; compare normally
+    if (isAscending) {
+        return a - b;
+    } else {
+        return b - a;
+    }
+}
+
+function handleFilterSubmit(table, event) {
+    event.preventDefault();
+
+    // Get the values from the form
+    const keyword = document.getElementById('keyword').value;
+    const min_value = document.getElementById('inputContainer').querySelector('input[name="min_value"]').value;
+    const max_value = document.getElementById('inputContainer').querySelector('input[name="max_value"]').value;
+
+    // Send the data to the server
+    fetch('/filter_results', {
+        method: 'POST',
+        body: new URLSearchParams({ 'keyword': keyword, 'min_value': min_value, 'max_value': max_value }),
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Update the grid with the filtered data
+        table.updateConfig({ data: data.data });
+        table.draw();
+    });
+}
+
+function initializeDataTable() {
+    // Initialize DataTable
+    var table = $('#data').DataTable({
+        layout: {
+        topStart: {
+             buttons: [
+            {
+                extend: 'csv',
+                title: 'Data export',
+                split: ['copy', 'excel', 'pdf', 'csv'],
+                filename: 'table_data',
+            }],
+        },
+        bottomEnd: {
+            buttons: ['pageLength'],
+            paging: {
+                numbers: true,
+                type: 'full_numbers'
+            }
+        },
+
+    },
+        "columnDefs": [{targets: '_all', orderDataType: customSort},
+            {
+                "targets": [4, 5, 6, 7, 16],  // Indexes of columns to round
+                "render": function (data, type) {
+                    // Check if the value is numeric
+                    if (type === 'display' && !isNaN(data)) {
+                        // Round to 3 decimal places
+                        return parseFloat(data).toFixed(3);
+                    }
+                    return data;
+                }
+            },
+            {
+                targets: 1, // Replace with the index of the column you want to convert to integers
+                render: function (data) {
+                    // Parse value to integer if it's not null or empty
+                    return data === null || data === "" ? null : parseInt(data, 10);
+                }
+            }
+        ],
+        ajax: '/api/data',
+        serverSide: false,
+        responsive: true,
+        autoWidth: false,
+        "searching": true,
+        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+        "pageLength": 10,
+        columns: [
+          {data: 'id_num'},
+          {data: 'number'},
+          {data: 'name'},
+          {data: 'class', orderable: false},
+          {data: 'a', name: 'a'},
+          {data: 'e', name: 'e'},
+          {data: 'i', name: 'i'},
+          {data: 'orbital_period'},
+          {data: 'family_number'},
+          {data: 'family_name', orderable: false},
+          {data: 'albedo'},
+          {data: 'mag'},
+          {data: 'density'},
+          {data: 'diameter'},
+          {data: 'taxonomy class', orderable: false},
+          {data: 'thermal inertia'},
+          {data: 'spin'}
+        ],
+    });
+    return table;
+}
+
+// function toggleColumnVisibility(table) {
+//     // Function to toggle column visibility based on checkbox
+//     document.querySelectorAll('a.toggle-vis').forEach((el) => {
+//     // document.querySelectorAll('.toggle-checkbox').forEach((el) => {
+//             el.addEventListener('click', function (e) {
+//                 e.preventDefault();
+//
+//                 const columnIdx = e.target.getAttribute('data-column');
+//                 const column = table.column(columnIdx);
+//
+//                 // Toggle the visibility
+//                 column.visible(!column.visible());
+//                 // Adjust the table after changing visibility
+//                 table.columns.adjust().draw(); // Ensures proper table resizing after column visibility change
+//             });
+//         });
+// }
+
+function setupColumnToggle(table) {
+    // Function to toggle column visibility based on checkbox
+    document.querySelectorAll('.toggle-checkbox').forEach((el) => {
+    // document.querySelectorAll('.toggle-checkbox').forEach((el) => {
+            el.addEventListener('change', function (e) {
+                e.preventDefault();
+
+                const columnIdx = e.target.getAttribute('data-column');
+                const column = table.column(columnIdx);
+
+                // Toggle the visibility
+                column.visible(!column.visible());
+                // Adjust the table after changing visibility
+                table.columns.adjust().draw(); // Ensures proper table resizing after column visibility change
+            });
+        });
+}
+
+function togglePanel() {
+    // Toggle the panel open/close with smooth transition
+    const content = document.querySelector('.checkbox-container');
+    content.classList.toggle('open');
+}
+
+function addFilterRow() {
+    const filterRow = $(`
+        <div class="filter-row form-inline mb-2">
+            <div class="filter-fields">
+                <label class="mr-2">Column:</label>
+                <select class="columnSelect form-control mr-2">
+                    <option value="a">a</option>
+                    <option value="e">e</option>
+                    <option value="i">i</option>
+                </select>
+                <label class="mr-2">Min:</label>
+                <input type="number" class="minValue form-control mr-2" placeholder="Minimum Value">
+                <label class="mr-2">Max:</label>
+                <input type="number" class="maxValue form-control mr-2" placeholder="Maximum Value">
+                <button type="button" class="removeFilter btn btn-danger btn-sm ml-2">Remove</button>
+            </div>
+        </div>
+    `);
+
+    $('#filterContainer').append(filterRow);
+}
+
+
+function applyFilters(table) {
+    // Clear previous filters
+    $.fn.dataTable.ext.search = [];
+
+    // Loop through each filter row and add its filter criteria
+    $('.filter-row').each(function() {
+        const col_name = $(this).find('.columnSelect').val();
+        const min = parseFloat($(this).find('.minValue').val());
+        const max = parseFloat($(this).find('.maxValue').val());
+
+        // Debugging: Log current filter details
+        // console.log(`Applying filter on column "${col_name}" with min: ${min}, max: ${max}`);
+
+        // Custom filter function for the current filter row
+        // $.fn.dataTable.ext.search.push
+        $.fn.dataTable.ext.search.push(function(settings, data) {
+            // Check if column name exists in the DataTable
+            const column = table.column(`${col_name}:name`);
+            // const column = table.column(col_name + ':name');
+            const columnIdx = column.index();
+
+            if (columnIdx === undefined) {
+                console.warn(`Column "${col_name}" not found in table.`);
+                return true; // Skip this filter if column not found
+            }
+
+            const columnValue = parseFloat(data[columnIdx]);
+
+            // Check if the column value is within range, handle NaN cases
+            const inbound = (isNaN(min) || columnValue >= min) &&
+                            (isNaN(max) || columnValue <= max);
+
+            // Debugging: Log comparison result
+            // console.log(`Filtering column "${col_name}" with value ${columnValue}, in range: ${inbound}`);
+            return inbound;
+        });
+    });
+
+    // Re-draw table with all filters applied
+    table.draw();
+}
+
+function controlFilters(table) {
+    // Event to add a new filter row
+    $('#addFilter').on('click', addFilterRow);
+
+    // Event to remove a filter row
+    $('#filterContainer').on('click', '.removeFilter', function () {
+        $(this).closest('.filter-row').remove();
+    });
+
+    // Apply filters on button click by calling the standalone function
+    $('#applyFilters').on('click', function () {
+        applyFilters(table);
+    });
+
+    // Initialize with one filter row
+    addFilterRow();
+}
+function exportTableToCSV(tableInstance) {
+    const filename = 'asteroid_data.csv';
+     if (!$.fn.DataTable.isDataTable(tableInstance.table().node())) {
+        console.error("Provided instance is not a valid DataTable.");
+        return;
+    }
+
+   let csv = [];
+
+    // Get headers in correct order
+    let headers = [];
+    tableInstance.columns().every(function() {
+        headers.push($(this.header()).text().trim());
+    });
+    csv.push(headers.join(',')); // Add headers as the first row in CSV
+
+    // Get each row's data in the correct order
+    tableInstance.rows({ search: 'applied' }).every(function() {
+        let rowData = this.data(); // `this.data()` returns the row’s data as an object or array
+        let row = [];
+
+        // Iterate over columns for each row to maintain order
+        tableInstance.columns().every(function(index) {
+            let cellData = rowData[this.dataSrc()]; // Access cell data by column name
+
+            // Check for undefined or null cell values, replacing them with an empty string if needed
+            row.push(cellData !== undefined && cellData !== null ? cellData.toString() : '');
+        });
+
+        csv.push(row.join(',')); // Add row data to CSV
+    });
+
+    // Create and download the CSV file
+    let csvContent = csv.join('\n');
+    let blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    let link = document.createElement('a');
+    let url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function togglePanel() {
+    const panelContent = document.getElementById('columnSelectContent');
+    if (panelContent.classList.contains('hidden')) {
+        panelContent.classList.remove('hidden');
+        panelContent.classList.add('visible');
+    } else {
+        panelContent.classList.remove('visible');
+        panelContent.classList.add('hidden');
+    }
+}
+
+function toggleAllCheckboxes() {
+    const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+    const checkboxes = document.querySelectorAll('.toggle-checkbox');
+    const table = $('#data').DataTable(); // Replace 'yourDataTable' with your table's ID.
+
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAllCheckbox.checked;
+        const columnIndex = checkbox.getAttribute('data-column');
+        table.column(columnIndex).visible(selectAllCheckbox.checked); // Update column visibility.
+    });
+}
+
+
+function toggleAllCheckboxes() {
+    // Select/Deselect all checkboxes and update row-specific checkboxes
+    const selectAllCheckbox = document.getElementById('selectAllCheckbox'); // "Select All" checkbox
+    const checkboxes = document.querySelectorAll('.toggle-checkbox'); // All individual checkboxes
+    const rows = document.querySelectorAll('.checkbox-row'); // All rows
+    const table = $('#data').DataTable(); // Replace with your DataTable ID
+
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAllCheckbox.checked;
+        const columnIndex = checkbox.getAttribute('data-column');
+        table.column(columnIndex).visible(selectAllCheckbox.checked); // Update column visibility
+    });
+
+    // Update the state of all row-specific checkboxes
+    updateRowCheckboxStates();
+}
+
+function toggleRowCheckboxes(rowCheckbox) {
+    // Select/Deselect all checkboxes in a specific row and update visibility
+    const table = $('#data').DataTable(); // Replace with your DataTable ID
+    const row = rowCheckbox.closest('.checkbox-row'); // Current row
+    const checkboxes = row.querySelectorAll('.toggle-checkbox');
+
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = rowCheckbox.checked;
+        const columnIndex = checkbox.getAttribute('data-column');
+        table.column(columnIndex).visible(rowCheckbox.checked); // Update column visibility
+    });
+
+    // Update "Select All" checkbox state
+    toggleColumnVisibility();
+}
+
+function toggleColumnVisibility() {
+    // Update visibility of individual columns when checkboxes are manually toggled
+    const table = $('#data').DataTable(); // Replace with your DataTable ID
+    const checkboxes = document.querySelectorAll('.toggle-checkbox');
+
+    checkboxes.forEach(checkbox => {
+        const columnIndex = checkbox.getAttribute('data-column');
+        table.column(columnIndex).visible(checkbox.checked); // Update column visibility
+    });
+
+    // Update "Select All" checkbox state
+    const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+    const someChecked = Array.from(checkboxes).some(cb => cb.checked);
+
+    selectAllCheckbox.checked = allChecked;
+    selectAllCheckbox.indeterminate = !allChecked && someChecked;
+
+    // Update row-specific checkbox states
+    updateRowCheckboxStates();
+}
+
+
+function updateRowCheckboxStates() {
+    // Update the state of row-specific checkboxes based on row content
+    const rows = document.querySelectorAll('.checkbox-row'); // Select all rows
+
+    rows.forEach(row => {
+        const rowCheckbox = row.querySelector('.row-select-checkbox'); // Row-specific checkbox
+        const rowCheckboxes = row.querySelectorAll('.toggle-checkbox'); // Checkboxes in the row
+        const allChecked = Array.from(rowCheckboxes).every(cb => cb.checked); // All checkboxes checked
+        const someChecked = Array.from(rowCheckboxes).some(cb => cb.checked); // At least one checkbox checked
+
+        if (rowCheckbox) {
+            rowCheckbox.checked = allChecked;
+            rowCheckbox.indeterminate = !allChecked && someChecked; // Set indeterminate state
+        }
+    });
+}
+
+function toggleRowHighlightByTable(table, tableName) {
+    // Add a click event listener to rows
+    $(tableName + ' tbody').on('click', 'tr', function () {
+        // Check if the clicked row is already selected
+        if ($(this).hasClass('selected')) {
+            // If clicked row is already selected, remove the 'selected' class (unhighlight)
+            $(this).removeClass('selected');
+        } else {
+            // If clicked row is not selected, highlight it and remove highlight from others
+            table.$('tr.selected').removeClass('selected'); // Remove highlight from all other rows
+            $(this).addClass('selected'); // Add highlight to clicked row
+        }
+    });
+}
+
+function realTimeHightlight(table) {
+      table.on('mouseenter', 'td', function () {
+                let colIdx = table.cell(this).index().column;
+                let rowIdx = table.cell(this).index().row;
+
+                table
+                    .cells()
+                    .nodes()
+                    .each((el) => el.classList.remove('highlight'));
+
+                table
+                    .column(colIdx)
+                    .nodes()
+                    .each((el) => el.classList.add('highlight'));
+
+            });
+}
+
+// Attach event listeners to checkboxes
+document.addEventListener('DOMContentLoaded', () => {
+    // Attach event listeners to individual checkboxes
+    document.querySelectorAll('.toggle-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            toggleColumnVisibility(); // Update visibility
+        });
+    });
+
+    // Attach event listeners to row-specific checkboxes
+    document.querySelectorAll('.row-select-checkbox').forEach(rowCheckbox => {
+        rowCheckbox.addEventListener('change', function () {
+            toggleRowCheckboxes(this); // Handle row-specific toggling
+        });
+    });
+
+    // Attach event listener to the "Select All" checkbox
+    document.getElementById('selectAllCheckbox').addEventListener('change', toggleAllCheckboxes);
+});
+
+</script>
+
+<body>
+    <h1>Asteroid Table</h1>
+    <!--Column Selection Panel-->
+<div class="container" id="controlsContainer">
+    <div class="dropdown-menu" id="columnSelectPanel">
+        <div class="panel-header" id="columnSelectHeader" onclick="togglePanel()">Select Columns</div>
+        <div class="panel-content" id="columnSelectContent">
+            <div class="checkbox-row">
+                <label>
+                    <input type="checkbox" id="selectAllCheckbox" onclick="toggleAllCheckboxes()"> Select All
+                </label>
+            </div>
+            <div class="checkbox-row">
+                <label>
+                    <input type="checkbox" class="row-select-checkbox" onclick="toggleRowCheckboxes(this)"> <!-- Row-specific checkbox -->
+                </label>
+                <label class="row-label">Row 1:</label>
+                <label><input type="checkbox" class="toggle-checkbox row1" data-column="4" checked> a</label>
+                <label><input type="checkbox" class="toggle-checkbox row1" data-column="5" checked> e</label>
+                <label><input type="checkbox" class="toggle-checkbox row1" data-column="8" checked> Fam Number</label>
+            </div>
+            <div class="checkbox-row">
+                <label>
+                    <input type="checkbox" class="row-select-checkbox" onclick="toggleRowCheckboxes(this)"> <!-- Row-specific checkbox -->
+                </label>
+                <label class="row-label">Row 2:</label>
+                <label><input type="checkbox" class="toggle-checkbox row2" data-column="9" checked> Fam Name</label>
+                <label><input type="checkbox" class="toggle-checkbox row2" data-column="10" checked> Albedo</label>
+                <label><input type="checkbox" class="toggle-checkbox row2" data-column="11" checked> Magnitude</label>
+            </div>
+            <div class="checkbox-row">
+                <label>
+                    <input type="checkbox" class="row-select-checkbox" onclick="toggleRowCheckboxes(this)"> <!-- Row-specific checkbox -->
+                </label>
+                <label class="row-label">Row 3:</label>
+                <label><input type="checkbox" class="toggle-checkbox row3" data-column="14" checked> Taxonomy</label>
+            </div>
+        </div>
+    </div>
+</div>
+    <!--Filter Panel-->
+
+    <div class="container mt-4" id="filterPanel">
+    <!-- Filter Panel -->
+        <div class="card">
+            <div class="card-body">
+                <h5>Filter Options</h5>
+                <div id="filterContainer">
+                    <!-- Filter Rows Will Be Added Here -->
+                </div>
+                <button id="addFilter" class="btn btn-secondary mt-2">Add Filter</button>
+                <button id="applyFilters" class="btn btn-primary mt-2">Apply Filters</button>
+                <button id="saveTableButton" type="button" class="btn btn-primary mt-2">Save Table</button>
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+    <div class="table-responsive" id="mainTableContainer">
+        <table id="data" class="table table-striped">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>SSO Number</th>
+            <th>Name</th>
+            <th>Orbital Class</th>
+            <th>a (AU)</th>
+            <th>e</th>
+            <th>i (deg)</th>
+            <th>Orbital Period (days)</th>
+            <th>Family Number</th>
+            <th>Family Name</th>
+            <th>Albedo</th>
+            <th>Magnitude</th>
+            <th>Density</th>
+            <th>Diameter (km)</th>
+            <th>Taxonomy Class</th>
+            <th>Thermal Inertia</th>
+            <th>Spin</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+    <script>
+
+        $(document).ready(function () {
+            applyEmptyOnTopSorting();
+            var table = initializeDataTable();
+            table.on('mouseenter', 'td', function () {
+                let colIdx = table.cell(this).index().column;
+                let rowIdx = table.cell(this).index().row;
+
+                table
+                    .cells()
+                    .nodes()
+                    .each((el) => el.classList.remove('highlight'));
+
+                table
+                    .column(colIdx)
+                    .nodes()
+                    .each((el) => el.classList.add('highlight'));
+            });
+
+            toggleRowHighlightByTable(table, '#data');
+            realTimeHightlight(table);
+            // Attach event listener to checkboxes for toggling column visibility
+            toggleColumnVisibility(table);
+            setupColumnToggle(table);
+            controlFilters(table);
+
+
+
+            const saveButton = document.getElementById('saveTableButton');
+            saveButton.addEventListener('click', function() {
+                exportTableToCSV(table);
+            });
+
+        });
+
+    </script>
+</body>
+
+{% endblock %}
