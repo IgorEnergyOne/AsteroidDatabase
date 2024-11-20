@@ -1,0 +1,25 @@
+#logos {
+    display: flex;
+    flex-wrap: wrap;         /* Allow items to wrap on smaller screens */
+    margin-bottom: 90%;
+    position:relative;
+    bottom: 10%;
+    width: 50%;
+}
+
+#welcome_hero {
+    text-align: center;
+}
+
+#acknowledgements {
+    text-align: center;
+    font-size: 80%;
+}
+
+#toTheDatabase {
+    display: flex;
+    justify-content: center;
+    margin: auto;
+    width: 200px;
+    height: 40px;
+}
