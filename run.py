@@ -8,47 +8,35 @@ db = SQLAlchemy(app)
 
 
 class Asteroid(db.Model):
-    id_num = db.Column(db.Integer, primary_key=True, index=True)
-    id = db.Column(db.String(64), index=False)
-    number = db.Column(db.Integer, primary_key=False)
-    name = db.Column(db.String(64), index=False)
-    orb_class = db.Column(db.String(256))
+    AstNumber = db.Column(db.Integer, primary_key=True, index=True)
+    AstName = db.Column(db.String(256), index=False)
+    ProvisDesign = db.Column(db.String(64), index=False)
+    orb_class = db.Column(db.String(10))
     a = db.Column(db.Float)
     e = db.Column(db.Float)
     i = db.Column(db.Float)
-    orb_period = db.Column(db.Float)
-    family_number = db.Column(db.Integer)
-    family_name = db.Column(db.String(120))
-    albedo = db.Column(db.Float)
-    absolute_magnitude = db.Column(db.Float)
-    density = db.Column(db.Float)
+    H = db.Column(db.Float)
     diameter = db.Column(db.Float)
-    tax_class = db.Column(db.String(12))
-    thermal_inertia = db.Column(db.Float)
-    spin = db.Column(db.Float)
+    diam_err = db.Column(db.Float)
+    albedo = db.Column(db.Float)
+    albedo_err = db.Column(db.Float)
+    taxonomy_class = db.Column(db.String(12))
 
     def to_dict(self):
         return {
-            'id_num': self.id_num,
-            'id': self.id,
-            'number': self.number,
-            'name': self.name,
-            'class': self.orb_class,
+            'ast_number': self.AstNumber,
+            'ast_name': self.AstName,
+            'designation': self.ProvisDesign,
+            'orb_class': self.orb_class,
             'a': self.a,
             'e': self.e,
             'i': self.i,
-            'orbital_period': self.orb_period,
-            'family_number': self.family_number,
-            'family_name': self.family_name,
-            'albedo': self.albedo,
-            'mag': self.absolute_magnitude,
-            'density': self.density,
+            'absolute_magnitude': self.H,
             'diameter': self.diameter,
-            'taxonomy class': self.tax_class,
-            'thermal inertia': self.thermal_inertia,
-            'spin': self.spin,
-
-
+            'diameter_err': self.diam_err,
+            'albedo': self.albedo,
+            'albedo_err': self.albedo_err,
+            'taxonomy class': self.taxonomy_class
         }
 
 
@@ -57,7 +45,7 @@ with app.app_context():
 
 
 @app.route('/')
-def home():
+def welcome_page():
     return render_template('welcome_page.html')
 
 
@@ -177,8 +165,8 @@ def get_data():
     return jsonify(data=data)
 
 def run_app(*args, **kwargs):
-    app.run(debug=False)
+    app.run(debug=False, host="1.0.0.1", port=5000)
 
 
-# if __name__ == "__main__":
-#     app.run(debug=False)
+if __name__ == "__main__":
+    app.run(debug=True)

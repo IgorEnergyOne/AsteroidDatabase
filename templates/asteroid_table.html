@@ -120,7 +120,7 @@ function initializeDataTable() {
     },
         "columnDefs": [{targets: '_all', orderDataType: customSort},
             {
-                "targets": [4, 5, 6, 7, 16],  // Indexes of columns to round
+                "targets": [],  // Indexes of columns to round
                 "render": function (data, type) {
                     // Check if the value is numeric
                     if (type === 'display' && !isNaN(data)) {
@@ -131,7 +131,7 @@ function initializeDataTable() {
                 }
             },
             {
-                targets: 1, // Replace with the index of the column you want to convert to integers
+                targets: 0, // Replace with the index of the column you want to convert to integers
                 render: function (data) {
                     // Parse value to integer if it's not null or empty
                     return data === null || data === "" ? null : parseInt(data, 10);
@@ -146,23 +146,19 @@ function initializeDataTable() {
         "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
         "pageLength": 10,
         columns: [
-          {data: 'id_num'},
-          {data: 'number'},
-          {data: 'name'},
-          {data: 'class', orderable: false},
+          {data: 'ast_number'},
+          {data: 'ast_name'},
+          {data: 'designation'},
+          {data: 'orb_class'},
           {data: 'a', name: 'a'},
           {data: 'e', name: 'e'},
           {data: 'i', name: 'i'},
-          {data: 'orbital_period'},
-          {data: 'family_number'},
-          {data: 'family_name', orderable: false},
-          {data: 'albedo'},
-          {data: 'mag'},
-          {data: 'density'},
+          {data: 'absolute_magnitude'},
           {data: 'diameter'},
+          {data: 'diameter_err', orderable: false},
+          {data: 'albedo'},
+          {data: 'albedo_err', orderable: false},
           {data: 'taxonomy class', orderable: false},
-          {data: 'thermal inertia'},
-          {data: 'spin'}
         ],
     });
     return table;
@@ -504,26 +500,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 <label>
                     <input type="checkbox" class="row-select-checkbox" onclick="toggleRowCheckboxes(this)"> <!-- Row-specific checkbox -->
                 </label>
-                <label class="row-label">Row 1:</label>
-                <label><input type="checkbox" class="toggle-checkbox row1" data-column="4" checked> a</label>
-                <label><input type="checkbox" class="toggle-checkbox row1" data-column="5" checked> e</label>
-                <label><input type="checkbox" class="toggle-checkbox row1" data-column="8" checked> Fam Number</label>
+                <label class="row-label">General:</label>
+                <label><input type="checkbox" class="toggle-checkbox row1" data-column="1" checked> name </label>
+                <label><input type="checkbox" class="toggle-checkbox row1" data-column="2" checked> designation</label>
             </div>
             <div class="checkbox-row">
                 <label>
                     <input type="checkbox" class="row-select-checkbox" onclick="toggleRowCheckboxes(this)"> <!-- Row-specific checkbox -->
                 </label>
-                <label class="row-label">Row 2:</label>
-                <label><input type="checkbox" class="toggle-checkbox row2" data-column="9" checked> Fam Name</label>
-                <label><input type="checkbox" class="toggle-checkbox row2" data-column="10" checked> Albedo</label>
-                <label><input type="checkbox" class="toggle-checkbox row2" data-column="11" checked> Magnitude</label>
+                <label class="row-label">Orbital:    </label>
+                <label><input type="checkbox" class="toggle-checkbox row2" data-column="3" checked> orb_class </label>
+                <label><input type="checkbox" class="toggle-checkbox row2" data-column="4" checked> a </label>
+                <label><input type="checkbox" class="toggle-checkbox row2" data-column="5" checked> e </label>
+                <label><input type="checkbox" class="toggle-checkbox row2" data-column="6" checked> i </label>
             </div>
             <div class="checkbox-row">
                 <label>
                     <input type="checkbox" class="row-select-checkbox" onclick="toggleRowCheckboxes(this)"> <!-- Row-specific checkbox -->
                 </label>
-                <label class="row-label">Row 3:</label>
-                <label><input type="checkbox" class="toggle-checkbox row3" data-column="14" checked> Taxonomy</label>
+                <label class="row-label">Physical:</label>
+                <label><input type="checkbox" class="toggle-checkbox row3" data-column="7" checked> Abs_mag </label>
+                <label><input type="checkbox" class="toggle-checkbox row3" data-column="8" checked> Diameter </label>
+                <label><input type="checkbox" class="toggle-checkbox row3" data-column="9" checked> Diam Err </label>
+                <label><input type="checkbox" class="toggle-checkbox row3" data-column="10" checked> Albedo </label>
+                <label><input type="checkbox" class="toggle-checkbox row3" data-column="11" checked> Albedo Err </label>
+                <label><input type="checkbox" class="toggle-checkbox row3" data-column="12" checked> Taxonomy </label>
             </div>
         </div>
     </div>
@@ -545,29 +546,24 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
     </div>
 
-    </div>
 
     <div class="table-responsive" id="mainTableContainer">
         <table id="data" class="table table-striped">
         <thead>
           <tr>
-            <th>#</th>
             <th>SSO Number</th>
-            <th>Name</th>
+            <th>SSO Name</th>
+            <th>SSO Designation</th>
             <th>Orbital Class</th>
             <th>a (AU)</th>
             <th>e</th>
             <th>i (deg)</th>
-            <th>Orbital Period (days)</th>
-            <th>Family Number</th>
-            <th>Family Name</th>
-            <th>Albedo</th>
             <th>Magnitude</th>
-            <th>Density</th>
             <th>Diameter (km)</th>
+            <th>Diameter error (km)</th>
+            <th>Albedo</th>
+            <th>Albedo error</th>
             <th>Taxonomy Class</th>
-            <th>Thermal Inertia</th>
-            <th>Spin</th>
           </tr>
         </thead>
         <tbody>

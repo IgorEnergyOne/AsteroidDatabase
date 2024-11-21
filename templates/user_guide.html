@@ -3,26 +3,33 @@
 
 {% block content %}
 <h1>User Guide</h1>
-<p>Information on how to use the database</p>
+<p>Information on how to use the database and the available parameters</p>
+
 <style>
     table {
-        width: 80%;
+        width: 60%;
         border-collapse: collapse;
+        border-radius: 10px; /* Adjust the radius for the roundness */
     }
     table, th, td {
-        border: 1px solid black;
+        border: 2px solid black;
+        background-color: #fafafa;
     }
     th, td {
-        padding: 8px;
+        padding: 5px;
         text-align: left;
     }
     th {
-        background-color: #f2f2f2;
+        background-color: #b0b0b0;
+    }
+    code {
+        color: #f14f4f;
+        font-size: 13pt;
     }
 </style>
 <h2>Parameters and Their Explanations</h2>
 
-<table>
+<table id="parameter_table">
     <thead>
         <tr>
             <th>Parameter</th>
@@ -31,72 +38,56 @@
     </thead>
     <tbody>
         <tr>
-            <td><code>data: 'id_num'</code></td>
-            <td>This parameter defines the column that will display the 'id_num' field from each row of data.</td>
+            <td><code>SSO Number</code></td>
+            <td>The number of an asteroid.</td>
         </tr>
         <tr>
-            <td><code>data: 'number'</code></td>
-            <td>This column will show the value of the 'number' field from each row of data.</td>
+            <td><code>SSO Name'</code></td>
+            <td>The name of an asteroid.</td>
         </tr>
         <tr>
-            <td><code>data: 'name'</code></td>
-            <td>This parameter maps the 'name' field to the respective column.</td>
+            <td><code>Provisional designation</code></td>
+            <td>The year of asteroid's discovery and an alphanumeric code indicating the half-month of discovery and the sequence within that half-month.</td>
         </tr>
         <tr>
-            <td><code>data: 'class', orderable: false</code></td>
-            <td>Displays the 'class' field, and disables sorting on this column (the column cannot be clicked to sort).</td>
+            <td><code>Orbital class</code></td>
+            <td>The class of an object based on its orbit</td>
         </tr>
         <tr>
-            <td><code>data: 'a', name: 'a'</code></td>
-            <td>Displays the 'a' field and assigns it a custom name 'a' for internal use, such as for referencing or filtering.</td>
+            <td><code>a</code></td>
+            <td>Semi-major axis of the orbit of an asteroid in astronomical units (AU)</td>
         </tr>
         <tr>
-            <td><code>data: 'e', name: 'e'</code></td>
-            <td>Displays the 'e' field and gives it a custom internal name 'e'.</td>
+            <td><code>e</code></td>
+            <td>Eccentricity of the orbit of an asteroid (from 0 to 1)</td>
         </tr>
         <tr>
-            <td><code>data: 'i', name: 'i'</code></td>
-            <td>Displays the 'i' field and assigns it a custom internal name 'i'.</td>
+            <td><code>i</code></td>
+            <td>Inclination of the orbit of an asteroid (degrees)</td>
         </tr>
         <tr>
-            <td><code>data: 'orbital_period'</code></td>
-            <td>This parameter binds the 'orbital_period' field to the respective column.</td>
+            <td><code>Absolute magnitude</code></td>
+            <td> The magnitude of an asteroid 1 AU away from observer and the Sun </td>
         </tr>
         <tr>
-            <td><code>data: 'family_number'</code></td>
-            <td>This parameter binds the 'family_number' field to the respective column.</td>
+            <td><code>Diameter</code></td>
+            <td>The effective size of an asteroid in kilometers (km) </td>
         </tr>
         <tr>
-            <td><code>data: 'family_name', orderable: false</code></td>
-            <td>Displays the 'family_name' field and disables sorting for this column.</td>
+            <td><code>Diameter Error </code></td>
+            <td>The uncertainty of the asteroid's diameter</td>
         </tr>
         <tr>
-            <td><code>data: 'albedo'</code></td>
-            <td>This parameter binds the 'albedo' field to the respective column.</td>
+            <td><code>Albedo</code></td>
+            <td>The fraction of sunlight that is diffusely reflected by an asteroid.</td>
         </tr>
         <tr>
-            <td><code>data: 'mag'</code></td>
-            <td>This parameter binds the 'mag' field to the respective column.</td>
+            <td><code>Albedo Error</code></td>
+            <td>The uncertainty of the asteroid's albedo</td>
         </tr>
         <tr>
-            <td><code>data: 'density'</code></td>
-            <td>This parameter binds the 'density' field to the respective column.</td>
-        </tr>
-        <tr>
-            <td><code>data: 'diameter'</code></td>
-            <td>This parameter binds the 'diameter' field to the respective column.</td>
-        </tr>
-        <tr>
-            <td><code>data: 'taxonomy class', orderable: false</code></td>
-            <td>Displays the 'taxonomy class' field and disables sorting for this column.</td>
-        </tr>
-        <tr>
-            <td><code>data: 'thermal inertia'</code></td>
-            <td>This parameter binds the 'thermal inertia' field to the respective column.</td>
-        </tr>
-        <tr>
-            <td><code>data: 'spin'</code></td>
-            <td>This parameter binds the 'spin' field to the respective column.</td>
+            <td><code>Taxonomy class</code></td>
+            <td>An asteroid spectral type is assigned to asteroids based on their reflectance spectrum, color, and albedo.</td>
         </tr>
     </tbody>
 </table>
