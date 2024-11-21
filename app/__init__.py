@@ -1,6 +1,5 @@
 from app.extensions import db
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from app.routes import main
 
 
@@ -18,6 +17,3 @@ def create_app():
 
     return app
 
-# if __name__ == "__main__":
-#     app = create_app()
-#     app.run(debug=False)
