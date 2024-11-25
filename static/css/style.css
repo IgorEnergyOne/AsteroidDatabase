@@ -109,22 +109,22 @@ label {
     font-size: 16px;
     /*border: #4f4f4f 1px solid;*/
 }
-#controlsContainer {
-    margin-top: 10px;
-    margin-left: 10px;
-    max-width: 90%;
-
-}
 #columnSelectPanel {
-    max-width: 700px;
-    max-width: 50%;
+    /*max-width: 700px;*/
+    /*max-width: 49%;*/
     display: block; /* Ensure visibility if not using Bootstrap */
     padding: 1px;
     border: 1px solid #ddd;
     background-color: #f9f9f9;
     width: auto;
-    margin-top: 35px;
-    margin-left: 50%;
+    /*margin-top: 35px;*/
+    /*margin-left: 50%;*/
+}
+
+#ControlsContainer {
+    margin-top: 10px;
+    margin-left: 10px;
+    max-width: 99%;
 }
 
 /* Styles for the collapsible panel */
@@ -175,15 +175,20 @@ label {
 display: inline-block;
 margin: 5px;
 }
-.mt-4 {
-    /*display: flex;*/
-    /*flex-wrap: wrap; !* Allow wrapping for small screens *!*/
-    max-width: 750px; /* Adjust as needed */
-    max-width: 50%;
-    /*background-color: #f5f5f5;*/
+
+#filterPanel {
+    flex-wrap: wrap; /* Allow wrapping for small screens */
+}
+
+#filterSelectContent {
+    /*visibility: collapse;*/
+    border: none;
+
 }
 .card-body {
-    background-color: #f5f5f5;;
+    background-color: #f5f5f5;
+    border: none;
+
 }
 /* Limit the maximum width of the filter row container */
 .filter-row {
@@ -345,10 +350,11 @@ td.highlight {
 
 #selectAllCheckbox {
     margin-right: 10px;
+    accent-color: #d80000; /* This sets the color of the checkbox */
 }
 
 .checkbox-row:first-child {
-    margin-bottom: 15px;
+    margin-bottom: 3px;
     font-weight: bold;
 }
 

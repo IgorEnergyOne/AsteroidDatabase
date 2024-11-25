@@ -3,7 +3,7 @@
 
 {% block content %}
 
-
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 <script>
 function downloadAsteroidData() {
     // Fetching the data
@@ -153,34 +153,16 @@ function initializeDataTable() {
           {data: 'a', name: 'a'},
           {data: 'e', name: 'e'},
           {data: 'i', name: 'i'},
-          {data: 'absolute_magnitude'},
-          {data: 'diameter'},
+          {data: 'absolute_magnitude', name: 'absolute_magnitude'},
+          {data: 'diameter', name: 'diameter'},
           {data: 'diameter_err', orderable: false},
-          {data: 'albedo'},
+          {data: 'albedo', name: 'albedo'},
           {data: 'albedo_err', orderable: false},
           {data: 'taxonomy class', orderable: false},
         ],
     });
     return table;
 }
-
-// function toggleColumnVisibility(table) {
-//     // Function to toggle column visibility based on checkbox
-//     document.querySelectorAll('a.toggle-vis').forEach((el) => {
-//     // document.querySelectorAll('.toggle-checkbox').forEach((el) => {
-//             el.addEventListener('click', function (e) {
-//                 e.preventDefault();
-//
-//                 const columnIdx = e.target.getAttribute('data-column');
-//                 const column = table.column(columnIdx);
-//
-//                 // Toggle the visibility
-//                 column.visible(!column.visible());
-//                 // Adjust the table after changing visibility
-//                 table.columns.adjust().draw(); // Ensures proper table resizing after column visibility change
-//             });
-//         });
-// }
 
 function setupColumnToggle(table) {
     // Function to toggle column visibility based on checkbox
@@ -200,11 +182,17 @@ function setupColumnToggle(table) {
         });
 }
 
-function togglePanel() {
-    // Toggle the panel open/close with smooth transition
-    const content = document.querySelector('.checkbox-container');
-    content.classList.toggle('open');
-}
+{#function togglePanel() {#}
+{#    // Toggle the panel open/close with smooth transition#}
+{#    const content = document.querySelector('.checkbox-container');#}
+{#    content.classList.toggle('open');#}
+{#}#}
+{##}
+{#function toggleFilterPanel() {#}
+{#    // Toggle the panel open/close with smooth transition#}
+{#    const content = document.querySelector('.card-body');#}
+{#    content.classList.toggle('open');#}
+{#}#}
 
 function addFilterRow() {
     const filterRow = $(`
@@ -215,6 +203,9 @@ function addFilterRow() {
                     <option value="a">a</option>
                     <option value="e">e</option>
                     <option value="i">i</option>
+                    <option value="absolute_magnitude">H</option>
+                    <option value="diameter">Diameter</option>
+                    <option value="albedo">Albedo</option>
                 </select>
                 <label class="mr-2">Min:</label>
                 <input type="number" class="minValue form-control mr-2" placeholder="Minimum Value">
@@ -242,12 +233,9 @@ function applyFilters(table) {
         // Debugging: Log current filter details
         // console.log(`Applying filter on column "${col_name}" with min: ${min}, max: ${max}`);
 
-        // Custom filter function for the current filter row
-        // $.fn.dataTable.ext.search.push
         $.fn.dataTable.ext.search.push(function(settings, data) {
             // Check if column name exists in the DataTable
             const column = table.column(`${col_name}:name`);
-            // const column = table.column(col_name + ':name');
             const columnIdx = column.index();
 
             if (columnIdx === undefined) {
@@ -332,8 +320,13 @@ function exportTableToCSV(tableInstance) {
     document.body.removeChild(link);
 }
 
-function togglePanel() {
-    const panelContent = document.getElementById('columnSelectContent');
+function togglePanel(container_id) {
+    const panelContent = document.getElementById(container_id);
+    if (!panelContent) {
+        console.error(`Element with ID '${container_id}' not found.`);
+        return;
+    }
+
     if (panelContent.classList.contains('hidden')) {
         panelContent.classList.remove('hidden');
         panelContent.classList.add('visible');
@@ -486,56 +479,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <body>
     <h1>Asteroid Table</h1>
-    <!--Column Selection Panel-->
-<div class="container" id="controlsContainer">
-    <div class="dropdown-menu" id="columnSelectPanel">
-        <div class="panel-header" id="columnSelectHeader" onclick="togglePanel()">Select Columns</div>
-        <div class="panel-content" id="columnSelectContent">
-            <div class="checkbox-row">
-                <label>
-                    <input type="checkbox" id="selectAllCheckbox" onclick="toggleAllCheckboxes()"> Select All
-                </label>
-            </div>
-            <div class="checkbox-row">
-                <label>
-                    <input type="checkbox" class="row-select-checkbox" onclick="toggleRowCheckboxes(this)"> <!-- Row-specific checkbox -->
-                </label>
-                <label class="row-label">General:</label>
-                <label><input type="checkbox" class="toggle-checkbox row1" data-column="1" checked> name </label>
-                <label><input type="checkbox" class="toggle-checkbox row1" data-column="2" checked> designation</label>
-            </div>
-            <div class="checkbox-row">
-                <label>
-                    <input type="checkbox" class="row-select-checkbox" onclick="toggleRowCheckboxes(this)"> <!-- Row-specific checkbox -->
-                </label>
-                <label class="row-label">Orbital:    </label>
-                <label><input type="checkbox" class="toggle-checkbox row2" data-column="3" checked> orb_class </label>
-                <label><input type="checkbox" class="toggle-checkbox row2" data-column="4" checked> a </label>
-                <label><input type="checkbox" class="toggle-checkbox row2" data-column="5" checked> e </label>
-                <label><input type="checkbox" class="toggle-checkbox row2" data-column="6" checked> i </label>
-            </div>
-            <div class="checkbox-row">
-                <label>
-                    <input type="checkbox" class="row-select-checkbox" onclick="toggleRowCheckboxes(this)"> <!-- Row-specific checkbox -->
-                </label>
-                <label class="row-label">Physical:</label>
-                <label><input type="checkbox" class="toggle-checkbox row3" data-column="7" checked> Abs_mag </label>
-                <label><input type="checkbox" class="toggle-checkbox row3" data-column="8" checked> Diameter </label>
-                <label><input type="checkbox" class="toggle-checkbox row3" data-column="9" checked> Diam Err </label>
-                <label><input type="checkbox" class="toggle-checkbox row3" data-column="10" checked> Albedo </label>
-                <label><input type="checkbox" class="toggle-checkbox row3" data-column="11" checked> Albedo Err </label>
-                <label><input type="checkbox" class="toggle-checkbox row3" data-column="12" checked> Taxonomy </label>
-            </div>
-        </div>
-    </div>
-</div>
-    <!--Filter Panel-->
 
-    <div class="container mt-4" id="filterPanel">
-    <!-- Filter Panel -->
-        <div class="card">
+<div class="container" id="ControlsContainer">
+<div class="row">
+    <!--Filter Panel-->
+    <div class="col-md-6 mb-3" id="filterPanel">
+        <div class="dropdown-menu-responsive" id="columnSelectPanel">
+        <div class="panel-header" id="columnSelectHeader" onclick="togglePanel('filterSelectContent')">Filter Options</div>
+        <div class="panel-content" id="filterSelectContent">
             <div class="card-body">
-                <h5>Filter Options</h5>
                 <div id="filterContainer">
                     <!-- Filter Rows Will Be Added Here -->
                 </div>
@@ -543,22 +495,69 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button id="applyFilters" class="btn btn-primary mt-2">Apply Filters</button>
                 <button id="saveTableButton" type="button" class="btn btn-primary mt-2">Save Table</button>
             </div>
+    </div>
+    </div>
+    </div>
+
+    <!--Column Selection Panel-->
+    <div class="col-md-6 mb-3" id="ColumnSelectsContainer">
+        <div class="dropdown-menu-responsive" id="columnSelectPanel">
+            <div class="panel-header" id="columnSelectHeader" onclick="togglePanel('columnSelectContent')">Select Columns</div>
+            <div class="panel-content" id="columnSelectContent">
+                <div class="checkbox-row">
+                    <label>
+                        <input type="checkbox" id="selectAllCheckbox" onclick="toggleAllCheckboxes()"> Select/De-select All
+                    </label>
+                </div>
+                <div class="checkbox-row">
+                    <label>
+                        <input type="checkbox" class="row-select-checkbox" onclick="toggleRowCheckboxes(this)"> <!-- Row-specific checkbox -->
+                    </label>
+                    <label class="row-label">General:</label>
+                    <label><input type="checkbox" class="toggle-checkbox row1" data-column="1" checked> name </label>
+                    <label><input type="checkbox" class="toggle-checkbox row1" data-column="2" checked> designation</label>
+                </div>
+                <div class="checkbox-row">
+                    <label>
+                        <input type="checkbox" class="row-select-checkbox" onclick="toggleRowCheckboxes(this)"> <!-- Row-specific checkbox -->
+                    </label>
+                    <label class="row-label">Orbital:    </label>
+                    <label><input type="checkbox" class="toggle-checkbox row2" data-column="3" checked> orb_class </label>
+                    <label><input type="checkbox" class="toggle-checkbox row2" data-column="4" checked> a </label>
+                    <label><input type="checkbox" class="toggle-checkbox row2" data-column="5" checked> e </label>
+                    <label><input type="checkbox" class="toggle-checkbox row2" data-column="6" checked> i </label>
+                </div>
+                <div class="checkbox-row">
+                    <label>
+                        <input type="checkbox" class="row-select-checkbox" onclick="toggleRowCheckboxes(this)"> <!-- Row-specific checkbox -->
+                    </label>
+                    <label class="row-label">Physical:</label>
+                    <label><input type="checkbox" class="toggle-checkbox row3" data-column="7" checked> Abs_mag </label>
+                    <label><input type="checkbox" class="toggle-checkbox row3" data-column="8" checked> Diameter </label>
+                    <label><input type="checkbox" class="toggle-checkbox row3" data-column="9" checked> Diam Err </label>
+                    <label><input type="checkbox" class="toggle-checkbox row3" data-column="10" checked> Albedo </label>
+                    <label><input type="checkbox" class="toggle-checkbox row3" data-column="11" checked> Albedo Err </label>
+                    <label><input type="checkbox" class="toggle-checkbox row3" data-column="12" checked> Taxonomy </label>
+                </div>
+            </div>
         </div>
     </div>
 
+</div>
+</div>
 
     <div class="table-responsive" id="mainTableContainer">
         <table id="data" class="table table-striped">
         <thead>
           <tr>
-            <th>SSO Number</th>
-            <th>SSO Name</th>
-            <th>SSO Designation</th>
+            <th>Number</th>
+            <th>Name</th>
+            <th>Designation</th>
             <th>Orbital Class</th>
             <th>a (AU)</th>
             <th>e</th>
             <th>i (deg)</th>
-            <th>Magnitude</th>
+            <th>H (mag)</th>
             <th>Diameter (km)</th>
             <th>Diameter error (km)</th>
             <th>Albedo</th>
@@ -570,6 +569,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </tbody>
       </table>
     </div>
+
     <script>
 
         $(document).ready(function () {
