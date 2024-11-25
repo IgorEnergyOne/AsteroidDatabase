@@ -1,0 +1,18 @@
+/* General Styles */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: url('../imgs/background.png') no-repeat center center/cover;
+}
+
+/* Header */
+header .logo {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+header .nav-link {
+    text-transform: uppercase;
+    font-size: 1.5rem;
+    padding: 0 0.5rem;
+}

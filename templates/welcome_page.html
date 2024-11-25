@@ -1,87 +1,34 @@
 {% extends 'base_template.html' %}
-{% block title %}Welcome{% endblock %}
-
 {% block content %}
+
 <link rel="stylesheet" href="{{ url_for('static', filename='css/welcome_page.css') }}">
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>M-type Asteroids</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-   <style>
-        /* Body: Full height with relative positioning */
-        body {
-            {#height: 100vh; /* Viewport height */#}
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-        }
+<body>
 
-        /* Container for logos and acknowledgments */
-        #logos {
-            position: relative;
-            margin-bottom: 70%;
-            {#bottom: 10%; /* Adjust to move higher/lower */#}
-            {#left: 50%;#}
-            {#transform: translateX(-50%);#}
-            {#display: flex;#}
-            justify-content: center;
-            gap: 20px;
-        }
-
-        #logos img {
-            height: 150px; /* Set uniform height */
-            width: auto; /* Maintain aspect ratio */
-            border: none;
-        }
-
-        /* Bottom text positioned below images */
-        .bottom-text {
-            {#position: absolute;#}
-            {#bottom: 5%;#}
-            {#left: 50%;#}
-            {#transform: translateX(-50%);#}
-            max-width: 90%;
-            text-align: center;
-            padding: 0 10px; /* Add padding for smaller screens */
-        }
-    </style>
-</head>
-<body class="bg-light">
-    <!-- Title Section -->
-    <div class="container text-center py-5" id="welcome_hero">
-        <header>
-            <h1 class="display-4 fw-bold">Welcome to the Database of M-type Asteroids</h1>
-            <p class="lead mt-3">
-                This is a database of M-type asteroids, known for their metallic composition.
-                Discover, analyze, and visualize asteroid data in one comprehensive platform.
+    <main class="welcome-section">
+        <div class="container text-center text-light">
+            <h1 class="mb-3">Welcome to the Database of M-type Asteroids</h1>
+            <p class="mb-4">
+                This is a database of M-type asteroids, known for their metallic composition. Discover, analyze, and visualize asteroid data in one comprehensive platform.
             </p>
-            <a href="{{ url_for('main.asteroid_table') }}" class="btn btn-primary mt-3" id="toTheDatabase">
-                Go to the database
-            </a>
-        </header>
+            <a href="{{ url_for('main.asteroid_table') }}" class="btn btn-primary btn-lg">Go to the Database</a>
+        </div>
+    </main>
+
+    <div class="d-flex justify-content-center align-items-center flex-wrap" id="logosContainer">
+        <img src="{{ url_for('static', filename='imgs/logo_up.jpeg') }}" alt="KharAsterTeam Logo" class="partner-logo">
+        <img src="{{ url_for('static', filename='imgs/emblem_university.jpg') }}" alt="University Logo" class="partner-logo">
+        <img src="{{ url_for('static', filename='imgs/ndi.png') }}" alt="Observatory Logo" class="partner-logo">
     </div>
 
-    <!-- Images Section -->
-    <div class="row mt-5 mx-auto" id='logos'>
-        <img src="{{ url_for('static', filename='imgs/logo_up.jpeg') }}" alt="Asteroid Image 2" class="img-fluid ">
-        <img src="{{ url_for('static', filename='imgs/emblem_university.jpg') }}" alt="Asteroid Image 3" class="img-fluid">
-        <img src="{{ url_for('static', filename='imgs/ndi.png') }}" alt="NDI logo" class="img-fluid">
-    </div>
 
-    <!-- Text field at the bottom -->
-    <div class="bottom-text">
-        <p id="acknowledgements">
-            This work was partially supported by the National Research Foundation of Ukraine
-            within the framework of the project N2020.02/0371 “Metallic asteroids: search for parent bodies
-            of iron meteorites, sources of extraterrestrial resources”.
-        </p>
-    </div>
+    <footer class="bg-dark text-light py-3">
+        <div class="container text-center">
+            <p>
+                This work was partially supported by the National Research Foundation of Ukraine within the framework of the project N2020.02/0371
+                "Metallic asteroids: search for parent bodies of iron meteorites, sources of extraterrestrial resources".
+            </p>
+        </div>
+    </footer>
+
 </body>
-</html>
-
-
-
 {% endblock %}

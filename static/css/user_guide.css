@@ -1,0 +1,54 @@
+.table {
+    width: auto;
+    border-collapse: collapse;
+    border-radius: 20px; /* Adjust the radius for the roundness */
+}
+.table, th, td {
+    border: 1px solid black;
+    background-color: #fafafa;
+    font-size: 15pt;
+    padding: 5px;
+    text-align: left;
+}
+
+#table {
+    width: auto;
+}
+
+.custom-code {
+    color: #a30000;          /* Red text color */
+    font-size: 15pt;
+    font-weight: bold;   /* Bold text */
+}
+
+/* Table customization */
+#parameter_table {
+    background-color: #ffffff; /* White background for the table */
+}
+
+#parameter_table th,
+#parameter_table td {
+    vertical-align: top; /* Align text at the top */
+}
+
+#parameter_table pre {
+    background-color: #f8f9fa; /* Light gray background for preformatted text */
+    border: 1px solid #ddd; /* Border for preformatted block */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px; /* Padding for better readability */
+}
+
+/* Add hover effect for table rows */
+#parameter_table tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.05); /* Light gray hover effect */
+    cursor: pointer;
+}
+
+/* Add shadow to table */
+.table-bordered {
+    border: 1px solid #dee2e6;
+}
+
+.shadow-sm {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
